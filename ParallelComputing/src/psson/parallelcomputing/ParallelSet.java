@@ -70,20 +70,10 @@ public class ParallelSet implements Runnable {
      * @return ParallelAtom the next ParallelAtom in the set
      * @throws NoSuchElementException 
      */
-    public synchronized ParallelAtom getData() throws NoSuchElementException {
+    private synchronized ParallelAtom getData() throws NoSuchElementException {
 
         return curPos.next();
 
-    }
-
-    /**
-     * Returns a ListIterator for the atoms of the ParallelSet
-     * 
-     * @return ListIterator a ListIterator for the atoms of the ParallelSet
-     */
-    public ListIterator<ParallelAtom> listIterator() {
-
-        return atoms.listIterator();
     }
     
     /**
@@ -121,4 +111,53 @@ public class ParallelSet implements Runnable {
         }
 
     }
+    
+    private class ParallelThread implements Runnable {
+    
+    ParallelSet mySet;
+    ParallelAtom myAtom;
+    boolean thingsToDo;
+
+    /**
+     * Creates a new ParallelThread and associates it to the supplied ParallelSet
+     * 
+     * @param parallelSet a ParallelSet
+     */
+    public ParallelThread(ParallelSet parallelSet) {
+
+        mySet = parallelSet;
+        thingsToDo = true;
+
+    }
+
+    /**
+     * Executes ParallelAtoms from the associated ParallelSet
+     */
+    public void run() {
+
+        fetch();
+
+        while(thingsToDo) {
+
+            myAtom.execute();
+
+            fetch();
+            
+        }
+        
+    }
+
+    /**
+     * This function fetches the next ParallelAtom from the associated ParallelSet
+     */
+    private void fetch() {
+
+        try {
+            myAtom = mySet.getData();
+        } catch (NoSuchElementException e) {
+            thingsToDo = false;
+        }
+    }
+    
+}
 }

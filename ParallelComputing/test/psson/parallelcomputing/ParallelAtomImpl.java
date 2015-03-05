@@ -23,57 +23,25 @@
  */
 package psson.parallelcomputing;
 
-import java.util.NoSuchElementException;
-
 /**
- *
+ * Dummy implementation of ParallelAtom interface for testing
  * @author Andreas Pettersson
  */
-public class ParallelThread implements Runnable {
-    
-    ParallelSet mySet;
-    ParallelAtom myAtom;
-    boolean thingsToDo;
+public class ParallelAtomImpl implements ParallelAtom {
+              
+        private boolean executed;
+        
+        public ParallelAtomImpl() {
+            executed = false;
+        }
 
-    /**
-     * Creates a new ParallelThread and associates it to the supplied ParallelSet
-     * 
-     * @param parallelSet a ParallelSet
-     */
-    public ParallelThread(ParallelSet parallelSet) {
-
-        mySet = parallelSet;
-        thingsToDo = true;
-
-    }
-
-    /**
-     * Executes ParallelAtoms from the associated ParallelSet
-     */
-    public void run() {
-
-        fetch();
-
-        while(thingsToDo) {
-
-            myAtom.execute();
-
-            fetch();
-            
+        @Override
+        public void execute() {
+            executed = true;
         }
         
-    }
-
-    /**
-     * This function fetches the next ParallelAtom from the associated ParallelSet
-     */
-    private void fetch() {
-
-        try {
-            myAtom = mySet.getData();
-        } catch (NoSuchElementException e) {
-            thingsToDo = false;
+        public boolean isExecuted() {
+            return executed;
         }
+
     }
-    
-}
